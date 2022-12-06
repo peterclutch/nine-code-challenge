@@ -39,17 +39,18 @@ class VirusTest {
     @MethodSource("inputProvider")
     @DisplayName("isInfected")
     void isInfectedExpectedResult(List<List<Character>> grid, Virus.Coordinate coordinate, boolean expected) {
-        Assertions.assertEquals(virus.isInfected(grid, coordinate), expected);
+        Assertions.assertEquals(expected, virus.isInfected(grid, coordinate));
     }
 
     private static Stream<Arguments> inputProvider() {
         return Stream.of(
+                // NB. Y-aksen starter oppe fra og ned. X-aksen er venstre til højre.
                 Arguments.of(SIMPLE_VIRUS_GRID, Virus.Coordinate.of(0,0), false),
                 Arguments.of(SIMPLE_VIRUS_GRID, Virus.Coordinate.of(1,1), true),
                 Arguments.of(SIMPLE_SURROUNDED_GRID, Virus.Coordinate.of(1, 1), false),
                 Arguments.of(LARGER_GRID, Virus.Coordinate.of(2, 3), false),
-                Arguments.of(LARGER_GRID, Virus.Coordinate.of(5, 1), true),
-                Arguments.of(LARGER_GRID, Virus.Coordinate.of(9, 2), true)
+                Arguments.of(LARGER_GRID, Virus.Coordinate.of(5, 5), true),
+                Arguments.of(LARGER_GRID, Virus.Coordinate.of(9, 3), true)
         );
     }
 }
