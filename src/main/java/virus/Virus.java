@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class Virus {
 
-    public boolean isInfected(List<List<Character>> grid, Coordinate coordinate) {
+    public boolean isInfected(Grid grid, Coordinate coordinate) {
         // først og fremmest skal det relevante felt være en virus før det er relevant at tjekke naboer
-        if (grid.get(coordinate.y).get(coordinate.x) != 'V') {
+        if (grid.at(coordinate) != Entity.VIRUS) {
             return false;
         }
 
@@ -16,29 +16,41 @@ public class Virus {
         return isInfected(grid, coordinate, checkedCoordinates);
     }
 
-    private boolean isInfected(List<List<Character>> grid, Coordinate coordinate, Set<Coordinate> checkedCoordinates) {
+    private boolean isInfected(Grid grid, Coordinate coordinate, Set<Coordinate> checkedCoordinates) {
         if (checkedCoordinates.contains(coordinate)) {
             // allerede tjekket uden at fejle
             return false;
-        } else if (!isInbound(grid, coordinate)) {
+        } else if (!grid.inbound(coordinate)) {
             // hvis virus er nabo til grænsen af koordinatsystemet må der være infektion
             return true;
         }
 
         checkedCoordinates.add(coordinate);
 
-        return switch (grid.get(coordinate.y).get(coordinate.x)) {
-            case 'V' -> coordinate.getNeighbors()
+        return switch (grid.at(coordinate)) {
+            case VIRUS -> coordinate.getNeighbors()
                         .stream()
                         .anyMatch(neighbor -> isInfected(grid, neighbor, checkedCoordinates));
-            case 'A' -> false;
-            default -> true;
+            case ANTIVIRUS -> false;
+            case EMPTY -> true;
         };
     }
 
-    private boolean isInbound(List<List<Character>> grid, Coordinate coordinate) {
-        return coordinate.y >= 0 && coordinate.y < grid.size()
-                && coordinate.x >= 0 && coordinate.x < grid.get(0).size();
+    public enum Entity {
+        VIRUS,
+        ANTIVIRUS,
+        EMPTY
+    }
+
+    public record Grid(List<List<Entity>> grid) {
+        Entity at(Coordinate coordinate) {
+            return grid.get(coordinate.y).get(coordinate.x);
+        }
+
+        boolean inbound(Coordinate coordinate) {
+            return coordinate.y >= 0 && coordinate.y < grid.size()
+                    && coordinate.x >= 0 && coordinate.x < grid.get(0).size();
+        }
     }
 
     public record Coordinate(int x, int y) {
