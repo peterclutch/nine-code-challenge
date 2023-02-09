@@ -1,8 +1,12 @@
 package balancer;
 
+import java.util.List;
+
 public class Balancer {
 
-    public static String balance(String input) {
+    private Balancer() { }
+
+    public static List<String> balance(String input) {
         // TODO implement
         return null;
     }
